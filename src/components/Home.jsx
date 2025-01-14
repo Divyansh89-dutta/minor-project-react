@@ -6,7 +6,7 @@ function Home() {
   return (
     <>
       <Sidenav />
-    <div className='w-[80%] h-full'></div>
+    <div className='w-[80%] h-full '></div>
     </>
   )
 }
