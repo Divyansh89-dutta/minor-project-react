@@ -49,7 +49,7 @@ const Topnav = () => {
 
         {/* Dropdown Search Results */}
         {query && search.length > 0 && ( // Only show if query is not empty and there are results
-          <div className="w-[20vw] flex flex-col rounded-xl mt-2 max-h-[50vh] gap-3 overflow-auto overflow-y-scroll absolute bg-zinc-500">
+          <div className="w-[20vw] z-10 flex flex-col rounded-xl mt-2 max-h-[50vh] gap-3 overflow-auto overflow-y-scroll absolute bg-zinc-500">
             {search.map((s, i) => (
               <Link
                 key={i}
