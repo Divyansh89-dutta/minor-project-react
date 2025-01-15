@@ -4,12 +4,13 @@ import { Link } from "react-router-dom";
 
 const Topnav = () => {
   const [query, setQuery] = useState("");
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState([]); // Initialize as an empty array
 
   const GetSearches = async () => {
+    if (!query) return; // Avoid API call if query is empty
     try {
-      const {data} = await axios.get(`/search/multi?query=${query}`);
-      console.log(data.result);
+      const { data } = await axios.get(`/search/multi?query=${query}`);
+      setSearch(data.results || []); // Update search state with fetched results
     } catch (error) {
       console.error("Error fetching searches:", error);
     }
@@ -47,18 +48,30 @@ const Topnav = () => {
         )}
 
         {/* Dropdown Search Results */}
-        <div className="w-[20vw] flex flex-col rounded-xl mt-2 max-h-50 gap-3 overflow-auto overflow-y-scroll absolute bg-zinc-500">
-          {/* Example Content */}
-          {/* <div className="p-2 bg-gray-600 rounded-lg hover:bg-zinc-700 duration-200 flex items-center gap-4">
-    <img
-      className="bg-red-300 rounded-full bg-cover h-10 w-10"
-      src=""
-      alt="Profile"
-    />
-    <span className="text-white">Hello Everyone</span>
-  </div> */}
-          {/* Add more content to trigger scrolling */}
-        </div>
+        {query && search.length > 0 && ( // Only show if query is not empty and there are results
+          <div className="w-[20vw] flex flex-col rounded-xl mt-2 max-h-[50vh] gap-3 overflow-auto overflow-y-scroll absolute bg-zinc-500">
+            {search.map((s, i) => (
+              <Link
+                key={i}
+                to={`/details/${s.id}`}
+                className="p-2 bg-gray-600 rounded-lg hover:bg-zinc-700 duration-200 flex items-center gap-4"
+              >
+                <img
+                  className="bg-red-300 rounded-full bg-cover h-10 w-10"
+                  src={
+                    s.backdrop_path
+                      ? `https://image.tmdb.org/t/p/original/${s.backdrop_path}`
+                      : "https://cdn-icons-png.flaticon.com/512/6855/6855128.png" // Fallback image
+                  }
+                  alt={s.name || s.original_name || s.original_title || "Profile"}
+                />
+                <span className="text-white">
+                  {s.name || s.original_name || s.original_title}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
