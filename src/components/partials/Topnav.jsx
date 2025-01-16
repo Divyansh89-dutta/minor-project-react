@@ -4,72 +4,82 @@ import { Link } from "react-router-dom";
 
 const Topnav = () => {
   const [query, setQuery] = useState("");
-  const [search, setSearch] = useState([]); // Initialize as an empty array
+  const [search, setSearch] = useState([]); // Holds search results
 
+  // Function to fetch search results
   const GetSearches = async () => {
-    if (!query) return; // Avoid API call if query is empty
+    if (!query.trim()) return; // Avoid API call for empty input
     try {
       const { data } = await axios.get(`/search/multi?query=${query}`);
-      setSearch(data.results || []); // Update search state with fetched results
+      setSearch(data.results || []); // Update search results
     } catch (error) {
-      console.error("Error fetching searches:", error);
+      console.error("Error fetching search results:", error);
     }
   };
 
+  // Trigger API call when query changes
   useEffect(() => {
     GetSearches();
   }, [query]);
 
   return (
-    <div className="w-full h-[10vh] flex items-center px-4">
-      <div className="relative w-[20vw] max-w-md">
+    <div className="w-[91%] lg:w-[30%] lg:ml-0 ml-2 lg:mt-0 mt-2 lg:h-14 h-[10vh] flex items-center rounded-full px-4 bg-zinc-900 shadow-md z-50">
+      <div className="relative w-full max-w-md mx-auto">
         {/* Search Icon */}
         <i
-          className="ri-search-eye-line absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500"
+          className="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-400"
           aria-label="Search Icon"
         ></i>
 
-        {/* Input Field */}
+        {/* Search Input */}
         <input
           type="text"
-          placeholder="Search"
-          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search..."
           value={query}
-          className="w-full pl-10 pr-10 text-xl py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 bg-zinc-200 shadow-md text-gray-500"
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-full pl-10 pr-10 py-2 text-base rounded-full bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-600 shadow-md placeholder-gray-400"
         />
 
-        {/* Close Icon */}
+        {/* Clear Input Icon */}
         {query && (
           <i
-            className="ri-close-fill absolute right-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-600 cursor-pointer"
+            className="ri-close-fill absolute right-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-400 cursor-pointer"
             aria-label="Clear Search"
             onClick={() => setQuery("")}
           ></i>
         )}
 
-        {/* Dropdown Search Results */}
-        {query && search.length > 0 && ( // Only show if query is not empty and there are results
-          <div className="w-[20vw] z-10 flex flex-col rounded-xl mt-2 max-h-[50vh] gap-3 overflow-auto overflow-y-scroll absolute bg-zinc-500">
-            {search.map((s, i) => (
+        {/* Dropdown for Search Results */}
+        {query && search.length > 0 && (
+          <div className="absolute left-0 w-full mt-2 max-h-[50vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-lg z-10">
+            {search.map((item, index) => (
               <Link
-                key={i}
-                to={`/details/${s.id}`}
-                className="p-2 bg-gray-600 rounded-lg hover:bg-zinc-700 duration-200 flex items-center gap-4"
+                key={index}
+                to={`/details/${item.id}`}
+                className="flex items-center gap-3 p-3 hover:bg-zinc-600 rounded-lg transition-all duration-200"
+                onClick={() => setQuery("")} // Close dropdown on click
               >
                 <img
-                  className="bg-red-300 rounded-full bg-cover h-10 w-10"
                   src={
-                    s.backdrop_path
-                      ? `https://image.tmdb.org/t/p/original/${s.backdrop_path}`
-                      : "https://cdn-icons-png.flaticon.com/512/6855/6855128.png" // Fallback image
+                    item.backdrop_path
+                      ? `https://image.tmdb.org/t/p/w500/${item.backdrop_path}`
+                      : "https://cdn-icons-png.flaticon.com/512/6855/6855128.png"
                   }
-                  alt={s.name || s.original_name || s.original_title || "Profile"}
+                  alt={item.name || item.original_name || item.original_title || "Profile"}
+                  className="h-10 w-10 rounded-full object-cover bg-gray-500"
                 />
-                <span className="text-white">
-                  {s.name || s.original_name || s.original_title}
+                <span className="text-white text-sm">
+                  {item.name || item.original_name || item.original_title || "Unknown Title"}
                 </span>
               </Link>
             ))}
+          </div>
+        )}
+
+        {/* Message when no results found */}
+        {query && search.length === 0 && (
+          <div className="absolute left-0 w-full mt-2 bg-zinc-700 p-3 rounded-lg shadow-lg text-white text-sm">
+            No results found.
           </div>
         )}
       </div>

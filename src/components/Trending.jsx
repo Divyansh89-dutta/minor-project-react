@@ -7,56 +7,66 @@ import Verticalcard from "./partials/Verticalcard";
 import Loading from "./Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-function Trending() {
-  document.title = "Movie | Trending";
+const Trending = () => {
+  // Set page title on mount
+  useEffect(() => {
+    document.title = "Movie | Trending";
+  }, []);
+
   const navigate = useNavigate();
   const [category, setCategory] = useState("all");
   const [duration, setDuration] = useState("day");
   const [trending, setTrending] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false); // Loading state to avoid duplicate fetches
+
+  // Fetch trending data
   const GetTrending = async () => {
+    if (loading) return; // Prevent duplicate fetches
+    setLoading(true);
     try {
-      console.log("Fetching data for:", category, duration); // Debugging
       const { data } = await axios.get(`/trending/${category}/${duration}?page=${page}`);
-      if(data.results.length > 0) {
-        setTrending((pervState) => [...pervState,...data.results]);
-        setPage(page + 1); // Increment page number after fetching data
+      if (data.results.length > 0) {
+        setTrending((prevState) => [...prevState, ...data.results]);
+        setPage((prevPage) => prevPage + 1); // Increment page for next fetch
+      } else {
+        setHasMore(false); // No more data
       }
-      else{
-        setHasMore(false);
-      }
-      // setTrending(data.results || []);
     } catch (error) {
       console.error("Error fetching trending data:", error.message);
+    } finally {
+      setLoading(false); // Unlock fetching
     }
   };
-  const referhHandler = async()=>{
-    if(trending.length === 0) {
-      await GetTrending();
-      }
-      else{
-        setPage(1);
-        setTrending([]);
-        await GetTrending();
-      }
-  }
+
+  // Refresh the data when filters change
+  const refreshHandler = async () => {
+    setPage(1);
+    setTrending([]);
+    setHasMore(true); // Reset infinite scroll
+    await GetTrending(); // Fetch new data
+  };
+
+  // Trigger data refresh on filter changes
   useEffect(() => {
-    referhHandler(); //
+    refreshHandler();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, duration]);
 
-  return trending.length > 0 ? (
-    <div className="p-10 w-screen h-screen overflow-y-auto overflow-hidden">
-      <div className="w-full flex items-center mb-5">
-        <h1 className="text-2xl flex items-center text-zinc-400 gap-2 font-semibold">
+  return (
+    <div className="w-screen h-screen bg-[#121212] overflow-auto">
+      {/* Header Section */}
+      <div className="p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <h1 className="text-2xl font-semibold text-zinc-400 flex items-center gap-2">
           <i
             onClick={() => navigate(-1)}
-            className="ri-skip-left-line text-2xl bg-[#6455CC] px-1 rounded-full cursor-pointer"
+            className="ri-skip-left-line text-2xl bg-[#6455CC] px-2 py-1 rounded-full cursor-pointer hover:bg-[#4d3aa6]"
           ></i>
           Trending
         </h1>
         <Topnav />
-        <div className="category flex gap-3 ml-auto">
+        <div className="flex flex-col lg:flex-row gap-4">
           <Dropdown
             title="Category"
             options={["movie", "tv", "all"]}
@@ -69,19 +79,28 @@ function Trending() {
           />
         </div>
       </div>
-      <InfiniteScroll
-        dataLength={trending.length}
-        next={GetTrending()}
-        hasMore={hasMore}
-        loader={<h1 className="text-center">Loading...</h1>}
-        >
-      <Verticalcard data={trending} title={category} />
-        </InfiniteScroll>
 
+      {/* Main Content Section */}
+      {trending.length > 0 ? (
+        <InfiniteScroll
+          dataLength={trending.length}
+          next={GetTrending}
+          hasMore={hasMore}
+          loader={<h1 className="text-center text-gray-500">Loading...</h1>}
+          endMessage={
+            <p className="text-center text-gray-500 font-semibold">
+              You have reached the end of the trending list.
+            </p>
+          }
+          className="px-5"
+        >
+          <Verticalcard data={trending} title={category.charAt(0).toUpperCase() + category.slice(1)} />
+        </InfiniteScroll>
+      ) : (
+        <Loading />
+      )}
     </div>
-  ) : (
-    <Loading />
   );
-}
+};
 
 export default Trending;

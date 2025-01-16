@@ -9,82 +9,60 @@ const Header = ({ data }) => {
     : "https://cdn-icons-png.flaticon.com/512/6855/6855128.png"; // Fallback image
 
   return (
-    <>
-      <header className="header px-2">
-        <div
-          style={{
-            backgroundImage: `linear-gradient(
-          to right,
-          rgba(0, 0, 0, 0.8) 30%,
-          rgba(0, 0, 0, 0.2) 100%
-        ), url(${imageUrl})`,
-            backgroundSize: "cover",
-            backgroundPosition: "top",
-            backgroundRepeat: "no-repeat",
-            height: "60vh",
-            display: "flex",
-            alignItems: "center",
-            padding: "20px",
-            color: "white",
-            borderRadius: "8px",
-          }}
-          className="header-container"
-        >
-          <div
-            style={{
-              maxWidth: "600px",
-            }}
-          >
-            <h1
-              style={{
-                fontSize: "3rem",
-                fontWeight: "bold",
-                marginBottom: "20px",
-                lineHeight: "1.2",
-                textShadow: "2px 4px 8px rgba(0, 0, 0, 0.7)",
-              }}
+    <header className="header px-4 lg:px-8 py-8">
+      <div
+        style={{
+          backgroundImage: `linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0.8) 30%,
+            rgba(0, 0, 0, 0.4) 100%
+          ), url(${imageUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          height: "70vh",
+          borderRadius: "12px",
+        }}
+        className="header-container flex flex-col justify-center lg:flex-row lg:items-center text-white gap-6"
+      >
+        <div className="content-wrapper max-w-xl mx-auto lg:mx-0 px-4">
+          <h1 className="text-4xl lg:text-5xl font-bold leading-tight text-shadow-lg">
+            {data.title || data.name || "Untitled"}
+          </h1>
+          <p className="text-lg lg:text-xl font-light opacity-90 mt-4 text-shadow-md">
+            {data.overview.slice(0, 100)}...
+            <Link
+              to="#"
+              className="text-blue-300 font-semibold hover:underline ml-1"
             >
-              {data.title || data.name || "Untitled"}
-            </h1>
-            <p
-              style={{
-                fontSize: "1.2rem",
-                fontWeight: "400",
-                opacity: "0.9",
-                marginBottom: "20px",
-                textShadow: "1px 2px 4px rgba(0, 0, 0, 0.6)",
-              }}
-            >
-              {data.overview.slice(0, 100)}....
-              <Link className="text-blue-300 font-semibold">more</Link>
-            </p>
-            <p
-              className="flex gap-5 items-center text-white text-sm font-medium"
-              style={{
-                padding: "18px 0px",
-              }}
-            >
-              <span className="flex items-center gap-2">
-                <i className="ri-calendar-event-line text-lg text-gray-300"></i>
-                <span>{data.release_date || "N/A"}</span>
-              </span>
+              more
+            </Link>
+          </p>
+          <div className="info-section flex flex-wrap gap-4 items-center mt-6 text-sm lg:text-base">
+            <span className="flex items-center gap-2">
+              <i className="ri-calendar-event-line text-xl text-gray-300"></i>
+              <span>{data.release_date || "N/A"}</span>
+            </span>
 
-              <span className="flex items-center gap-2">
-                <i className="ri-movie-2-fill text-lg text-gray-300"></i>
-                <span>{data.media_type || "Unknown"}</span>
-              </span>
+            <span className="flex items-center gap-2">
+              <i className="ri-movie-2-fill text-xl text-gray-300"></i>
+              <span>{data.media_type || "Unknown"}</span>
+            </span>
 
-              <span className="flex items-center gap-2">
-                <i className="ri-chat-poll-fill text-lg text-gray-300"></i>
-                <span>{data.vote_count || "0"}</span>
-              </span>
-            </p>
-            <Link className="bg-[#6556CD] p-3 rounded-lg text-xl font-semibold">Watch Tralier</Link>
-            <div></div>
+            <span className="flex items-center gap-2">
+              <i className="ri-chat-poll-fill text-xl text-gray-300"></i>
+              <span>{data.vote_count || "0"}</span>
+            </span>
           </div>
+          <Link
+            to="#"
+            className="bg-purple-600 hover:bg-purple-700 transition-all px-6 py-3 rounded-lg text-lg font-semibold mt-6 inline-block"
+          >
+            Watch Trailer
+          </Link>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   );
 };
 
