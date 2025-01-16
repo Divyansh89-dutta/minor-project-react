@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Topnav from "./partials/Topnav";
 import Dropdown from "./partials/Dropdown";
@@ -7,8 +7,8 @@ import Verticalcard from "./partials/Verticalcard"; // Assuming this renders ind
 import Loading from "./Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const Popular = () => {
-    document.title = "SCSDB | Popular";
+const Movie = () => {
+    document.title = "SCSDB | Movies";
 
     const navigate = useNavigate();
     const [category, setCategory] = useState("movie");
@@ -17,10 +17,10 @@ const Popular = () => {
     const [hasMore, setHasMore] = useState(true);
     const [error, setError] = useState(null);
 
-    const GetPopular = async () => {
+    const GetMovies = async () => {
         try {
             const { data } = await axios.get(
-                `${category}/popular?page=${page}`
+                `movie/popular?page=${page}`
             );
             if (data.results && data.results.length > 0) {
                 setPopular((prevState) => [...prevState, ...data.results]);
@@ -29,8 +29,8 @@ const Popular = () => {
                 setHasMore(false);
             }
         } catch (error) {
-            console.error("Error fetching popular data: ", error);
-            setError("Failed to load popular data. Please try again later.");
+            console.error("Error fetching popular movie data: ", error);
+            setError("Failed to load movie data. Please try again later.");
             setHasMore(false);
         }
     };
@@ -41,31 +41,35 @@ const Popular = () => {
         setHasMore(true);
         setError(null);
     };
+
     useEffect(() => {
         refreshHandler(); // Reset state when the category changes
-        GetPopular(); // Fetch data immediately after resetting the state
+        GetMovies(); // Fetch data immediately after resetting the state
     }, [category]);
     
     useEffect(() => {
-        if (hasMore) GetPopular(); // Fetch additional data
+        if (hasMore) GetMovies(); // Fetch additional data
     }, [hasMore]);
     
 
     return (
-        <div className="w-screen h-screen ">
+        <div className="w-screen h-screen">
             <div className="px-[5%] w-full overflow-auto overflow-y-hidden flex items-center justify-between">
                 <h1 className="text-2xl font-semibold text-zinc-400">
                     <i
                         onClick={() => navigate(-1)}
                         className="hover:text-[#6556CD] ri-arrow-left-line cursor-pointer"
                     ></i>{" "}
-                    Popular
+                    Movies
                 </h1>
                 <div className="flex items-center w-[80%]">
                     <Topnav />
                     <Dropdown
                         title="Category"
-                        options={["tv", "movie"]}
+                        options={[ "popular",
+                            "top_rated",
+                            "upcoming",
+                            "now_playing",]}
                         func={(e) => setCategory(e.target.value)}
                     />
                 </div>
@@ -76,7 +80,7 @@ const Popular = () => {
             ) : (
                 <InfiniteScroll
                     dataLength={popular.length}
-                    next={GetPopular}
+                    next={GetMovies}
                     hasMore={hasMore}
                     loader={<h1 className="text-center">Loading...</h1>}
                 >
@@ -87,4 +91,4 @@ const Popular = () => {
     );
 };
 
-export default Popular;
+export default Movie;

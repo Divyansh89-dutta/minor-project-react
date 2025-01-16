@@ -73,7 +73,7 @@ function Trending() {
         dataLength={trending.length}
         next={GetTrending()}
         hasMore={hasMore}
-        loader={<Loading />}
+        loader={<h1 className="text-center">Loading...</h1>}
         >
       <Verticalcard data={trending} title={category} />
         </InfiniteScroll>

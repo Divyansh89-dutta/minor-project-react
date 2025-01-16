@@ -1,7 +1,7 @@
 import loader from "/loader.gif";
 const Loading = () => {
     return (
-        <div className="w-screen h-screen flex justify-center items-center bg-black">
+        <div className="w-[100%] h-[100%] flex justify-center items-center bg-black">
             <img
                 className="h-[50%] object-cover"
                  src={loader}

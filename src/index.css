@@ -54,3 +54,11 @@ select::-ms-expand {
 .select:hover::after {
     color: #6556cd;
 }
+
+body {
+    background-color: #121212; /* Set your desired background color */
+}
+
+.w-screen {
+    background-color: #121212; /* Ensure the background is consistent */
+}

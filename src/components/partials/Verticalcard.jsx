@@ -8,14 +8,14 @@ function Verticalcard({ data, title }) {
         {data.map((c, i) => (
           <div
             key={i}
-            className="bg-zinc-400 rounded-lg shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1"
+            className="bg-zinc-200 rounded-lg shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1"
           >
             <Link to={`/movie/${c.id}`} className="block">
               <div className="relative overflow-hidden rounded-t-lg">
                 <img
                   src={
-                    c.poster_path
-                      ? `https://image.tmdb.org/t/p/w300/${c.poster_path}`
+                    c.poster_path|| c.profile_path
+                      ? `https://image.tmdb.org/t/p/w300/${c.poster_path || c.profile_path}`
                       : 'https://via.placeholder.com/300x450?text=No+Image'
                   }
                   alt={c.title}
