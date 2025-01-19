@@ -1,129 +1,87 @@
-import React, { useEffect, useState } from "react";
-import axios from "../../utils/axios";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function Sidenav() {
-  const [isOpen, setIsOpen] = useState(false); // State to toggle the sidenav
+const Sidenav = () => {
+  // State to toggle sidenav visibility on mobile
+  const [isOpen, setIsOpen] = useState(false);
 
-  const GetSearches = async () => {
-    try {
-      const response = await axios.get("/search/multi");
-      console.log("Search Results:", response.data); // Log or handle data as required
-    } catch (error) {
-      console.error("Error fetching searches:", error);
-    }
+  // Toggle function
+  const toggleSidenav = () => {
+    setIsOpen(!isOpen);
   };
-
-  useEffect(() => {
-    GetSearches();
-  }, []);
 
   return (
     <>
-      {/* Toggle Button for Mobile */}
+      {/* Button to open/close the sidenav on mobile */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-3 left-[83.5vw] z-50 bg-purple-600 text-white p-3 rounded-md shadow-md"
+        onClick={toggleSidenav}
+        className="md:hidden text-white fixed top-2 right-4 p-3 bg-[#6556CD] rounded-lg z-30 transition-transform transform hover:scale-105"
+        aria-label={isOpen ? "Close navigation" : "Open navigation"}
       >
-        {isOpen ? (
-          <i className="ri-close-fill text-2xl"></i>
-        ) : (
-          <i className="ri-menu-fill text-2xl"></i>
-        )}
+        {isOpen ? "Close" : "Open"}
       </button>
 
-      {/* Sidenav */}
+      {/* Sidebar that is conditionally displayed */}
       <div
-        className={`fixed lg:relative top-0 left-0 w-[70%] lg:w-[20%] h-full bg-zinc-900 border-r-2 border-zinc-400 p-4 z-40 transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 transition-transform duration-300 ease-in-out`}
+        className={`${
+          isOpen ? "w-64" : "w-0"
+        } fixed h-full bg-gray-900 border-r-2 border-zinc-400  transition-all z-50 duration-300 ease-in-out md:relative md:w-64`}
+        style={{ overflow: isOpen ? "auto" : "hidden" }} // Hide overflow when closed
       >
-        {/* Logo Section */}
-        <div className="flex items-center mb-6">
-          <i className="text-[#6556CD] text-3xl ri-tv-fill mr-2"></i>
-          <h1 className="text-xl text-white font-bold">Divyansh</h1>
-        </div>
-
-        {/* Navigation Section */}
-        <nav>
-          <h2 className="text-zinc-500 font-semibold text-lg mt-5 mb-3">
-            New Feeds
-          </h2>
-          <ul className="flex flex-col gap-3 text-zinc-400">
+        <div className="p-4 pt-6">
+          <h1 className="text-2xl text-white font-bold flex items-center mb-6">
+            <i className="text-[#6556CD] ri-tv-fill mr-2"></i>
+            <span>SCSDB.</span>
+          </h1>
+          <nav className="flex flex-col text-zinc-400 text-lg gap-3">
+            <h2 className="text-white font-semibold text-xl mb-4">New Feeds</h2>
             <Link
               to="/trending"
-              className="hover:bg-purple-600 flex items-center gap-3 px-5 py-2 rounded-md hover:text-white transition-all duration-200"
-              onClick={() => setIsOpen(false)} // Close sidenav on link click
+              className="hover:bg-[#6556CD] hover:text-white duration-300 rounded-lg p-4"
             >
-              <i className="ri-fire-fill"></i>Trending
+              <i className="ri-fire-fill"></i> Trending
             </Link>
             <Link
               to="/popular"
-              className="hover:bg-purple-600 flex items-center gap-3 px-5 py-2 rounded-md hover:text-white transition-all duration-200"
-              onClick={() => setIsOpen(false)}
+              className="hover:bg-[#6556CD] hover:text-white duration-300 rounded-lg p-4"
             >
-              <i className="ri-instance-fill"></i>Populars
+              <i className="mr-2 ri-bard-fill"></i> Popular
             </Link>
             <Link
-              to="/movies"
-              className="hover:bg-purple-600 flex items-center gap-3 px-5 py-2 rounded-md hover:text-white transition-all duration-200"
-              onClick={() => setIsOpen(false)}
+              to="/movie"
+              className="hover:bg-[#6556CD] hover:text-white duration-300 rounded-lg p-4"
             >
-              <i className="ri-movie-2-fill"></i>Movies
+              <i className="mr-2 ri-movie-2-fill"></i> Movies
             </Link>
             <Link
-              to="/tv-shows"
-              className="hover:bg-purple-600 flex items-center gap-3 px-5 py-2 rounded-md hover:text-white transition-all duration-200"
-              onClick={() => setIsOpen(false)}
+              to="/tv"
+              className="hover:bg-[#6556CD] hover:text-white duration-300 rounded-lg p-4"
             >
-              <i className="ri-tv-2-fill"></i>Tv-shows
+              <i className="mr-2 ri-tv-2-fill"></i> TV Shows
             </Link>
             <Link
-              to="/peoples"
-              className="hover:bg-purple-600 flex items-center gap-3 px-5 py-2 rounded-md hover:text-white transition-all duration-200"
-              onClick={() => setIsOpen(false)}
+              to="/person"
+              className="hover:bg-[#6556CD] hover:text-white duration-300 rounded-lg p-4"
             >
-              <i className="ri-group-fill"></i>Peoples
+              <i className="mr-2 ri-team-fill"></i> People
             </Link>
-          </ul>
-        </nav>
-
-        {/* Divider */}
-        <hr className="mt-6 border-zinc-700" />
-
-        {/* Website Information Section */}
-        <nav>
-          <h2 className="text-zinc-500 font-semibold text-lg mt-5 mb-3">
-            Website Information
-          </h2>
-          <ul className="flex flex-col gap-3 text-zinc-400">
-            <Link
-              to="/about"
-              className="hover:bg-purple-600 flex items-center gap-3 px-5 py-2 rounded-md hover:text-white transition-all duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              <i className="ri-information-fill"></i>About
+          </nav>
+          <hr className="border-none h-[1px] bg-zinc-400 my-5" />
+          <nav className="flex flex-col text-zinc-400 text-lg gap-3">
+            <h2 className="text-white font-semibold text-xl mb-4">
+              Website Information
+            </h2>
+            <Link className="hover:bg-[#6556CD] hover:text-white duration-300 rounded-lg p-4">
+              <i className="mr-2 ri-information-fill"></i> About SCSDB
             </Link>
-            <Link
-              to="/contact"
-              className="hover:bg-purple-600 flex items-center gap-3 px-5 py-2 rounded-md hover:text-white transition-all duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              <i className="ri-contacts-fill"></i>Contact Us
+            <Link className="hover:bg-[#6556CD] hover:text-white duration-300 rounded-lg p-4">
+              <i className="mr-2 ri-phone-fill"></i> Contact Us
             </Link>
-          </ul>
-        </nav>
+          </nav>
+        </div>
       </div>
-
-      {/* Overlay for Mobile */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => setIsOpen(false)} // Close sidenav when clicking outside
-        ></div>
-      )}
     </>
   );
-}
+};
 
 export default Sidenav;

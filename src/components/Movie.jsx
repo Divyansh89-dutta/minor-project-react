@@ -1,102 +1,109 @@
-import React, { useState, useEffect } from "react";
+import axios from "../utils/axios";
+import { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router-dom";
+import Loading from "./Loading";
 import Topnav from "./partials/Topnav";
 import Dropdown from "./partials/Dropdown";
-import axios from "../utils/axios";
-import Verticalcard from "./partials/Verticalcard"; // Renders individual movie cards
-import Loading from "./Loading";
-import InfiniteScroll from "react-infinite-scroll-component";
+import Cards from "./partials/Cards";
 
 const Movie = () => {
-    // Set page title
-    useEffect(() => {
-        document.title = "SCSDB | Movies";
-    }, []);
+    document.title = "SCSDB | Movies";
 
     const navigate = useNavigate();
-    const [category, setCategory] = useState("popular");
+    const [category, setCategory] = useState("now_playing");
     const [movies, setMovies] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false); // Prevent duplicate fetches
 
-    // Fetch movies based on category
-    const GetMovies = async () => {
-        if (loading) return; // Prevent duplicate requests
-        setLoading(true);
+    const GetMovie = async () => {
         try {
             const { data } = await axios.get(`/movie/${category}?page=${page}`);
-            if (data.results && data.results.length > 0) {
+            if (data.results.length > 0) {
                 setMovies((prevState) => [...prevState, ...data.results]);
-                setPage((prevPage) => prevPage + 1);
+                setPage(page + 1);
             } else {
-                setHasMore(false); // No more results
+                setHasMore(false);
             }
         } catch (error) {
-            console.error("Error fetching movies:", error);
-            setError("Failed to load movie data. Please try again later.");
-            setHasMore(false);
-        } finally {
-            setLoading(false); // Unlock fetch
+            setError("Failed to load movies. Please try again later.");
         }
     };
 
-    // Refresh handler when category changes
-    const refreshHandler = async () => {
+    const refreshHandler = () => {
         setPage(1);
         setMovies([]);
         setHasMore(true);
         setError(null);
-        await GetMovies();
+        GetMovie();
     };
 
-    // Trigger refresh when category changes
     useEffect(() => {
         refreshHandler();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [category]);
 
     return (
-        <div className="w-screen h-screen bg-[#121212] overflow-auto">
-            {/* Header Section */}
-            <div className="p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <h1 className="text-2xl font-semibold text-zinc-400 flex items-center gap-2">
+        <div className="w-screen bg-[#121928] h-screen">
+            {/* Top Navigation Bar */}
+            <div className="px-[5%] w-full flex flex-col md:flex-row items-center justify-between py-4">
+                <h1 className="text-2xl font-semibold text-zinc-400 mb-4 md:mb-0">
                     <i
                         onClick={() => navigate(-1)}
-                        className="hover:text-[#6556CD] ri-arrow-left-line cursor-pointer"
-                    ></i>
-                    Movies
+                        className="hover:text-[#6556CD] cursor-pointer ri-arrow-left-line"
+                    ></i>{" "}
+                    Movie
+                    <small className="ml-2 text-sm text-zinc-600">
+                        ({category})
+                    </small>
                 </h1>
-                <Topnav />
-                <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex flex-col items-center lg:flex w-full md:w-[80%] gap-4">
+                    <Topnav />
                     <Dropdown
                         title="Category"
-                        options={["popular", "top_rated", "upcoming", "now_playing"]}
+                        options={[
+                            "popular",
+                            "top_rated",
+                            "upcoming",
+                            "now_playing",
+                        ]}
                         func={(e) => setCategory(e.target.value)}
                     />
                 </div>
             </div>
 
-            {/* Main Content Section */}
-            {error ? (
-                <div className="text-center text-red-500">{error}</div>
-            ) : (
+            {/* Error Handling */}
+            {error && (
+                <div className="text-center text-red-500 font-semibold py-4">
+                    {error}
+                </div>
+            )}
+
+            {/* Infinite Scroll Section */}
+            {!error && (
                 <InfiniteScroll
                     dataLength={movies.length}
-                    next={GetMovies}
+                    next={GetMovie}
                     hasMore={hasMore}
-                    loader={<h1 className="text-center text-gray-500">Loading...</h1>}
+                    loader={
+                        <div className="text-center py-4">
+                            <span className="text-xl font-medium text-gray-500">
+                                Loading...
+                            </span>
+                        </div>
+                    }
                     endMessage={
-                        <p className="text-center text-gray-500 font-semibold">
-                            You have reached the end of the movie list.
+                        <p className="text-center text-gray-500 py-4">
+                            <strong>No more movies to load.</strong>
                         </p>
                     }
-                    className="px-5"
                 >
-                    <Verticalcard data={movies} title={'movie'.charAt(0).toUpperCase() + 'movie'.slice(1)} />
+                    <Cards data={movies} title="Movies" />
                 </InfiniteScroll>
             )}
+
+            {/* Loading Component */}
+            {movies.length === 0 && !error && <Loading />}
         </div>
     );
 };

@@ -2,68 +2,65 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Header = ({ data }) => {
-  if (!data) return null;
+    // Ensure data is provided
+    if (!data) {
+        return null; // Or render a loading/error state
+    }
 
-  const imageUrl = data.backdrop_path
-    ? `https://image.tmdb.org/t/p/original/${data.backdrop_path}`
-    : "https://cdn-icons-png.flaticon.com/512/6855/6855128.png"; // Fallback image
+    const title = data.name || data.title || data.original_name || data.original_title || "Untitled";
+    const overview = data.overview ? `${data.overview.slice(0, 200)}...` : "No overview available.";
+    const releaseDate = data.release_date || "No Information";
+    const mediaType = data.media_type ? data.media_type.toUpperCase() : "UNKNOWN";
 
-  return (
-    <header className="header px-4 lg:px-8 py-8">
-      <div
-        style={{
-          backgroundImage: `linear-gradient(
-            to right,
-            rgba(0, 0, 0, 0.8) 30%,
-            rgba(0, 0, 0, 0.4) 100%
-          ), url(${imageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          height: "70vh",
-          borderRadius: "12px",
-        }}
-        className="header-container flex flex-col justify-center lg:flex-row lg:items-center text-white gap-6"
-      >
-        <div className="content-wrapper max-w-xl mx-auto lg:mx-0 px-4">
-          <h1 className="text-4xl lg:text-5xl font-bold leading-tight text-shadow-lg">
-            {data.title || data.name || "Untitled"}
-          </h1>
-          <p className="text-lg lg:text-xl font-light opacity-90 mt-4 text-shadow-md">
-            {data.overview.slice(0, 100)}...
+    return (
+        <div
+            style={{
+                background: `linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.8)), url(https://image.tmdb.org/t/p/original/${data.backdrop_path || data.profile_path})`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+            }}
+            className="w-full h-[50vh] md:h-[60vh] flex flex-col justify-end items-start p-6 md:p-12 text-white relative"
+        >
+            <div className="absolute inset-0 bg-black opacity-30"></div> {/* Overlay for better contrast */}
+
+            {/* Title */}
+            <h1 className="relative text-3xl md:text-5xl font-extrabold w-full md:w-[70%] leading-tight truncate">
+                {title}
+            </h1>
+
+            {/* Overview */}
+            <p className="relative mt-3 mb-4 text-sm md:text-lg w-full md:w-[70%] truncate">
+                {overview}
+                <Link
+                    to={`/${data.media_type}/details/${data.id}`}
+                    className="text-blue-400 underline ml-2 hover:text-blue-500 transition duration-300"
+                >
+                    more
+                </Link>
+            </p>
+
+            {/* Metadata */}
+            <div className="relative flex items-center text-sm md:text-base">
+                <p className="flex items-center mr-6">
+                    <i className="text-yellow-500 ri-megaphone-fill mr-2"></i>
+                    {releaseDate}
+                </p>
+                <p className="flex items-center">
+                    <i className="ml-2 text-yellow-500 ri-album-fill mr-2"></i>
+                    {mediaType}
+                </p>
+            </div>
+
+            {/* Watch Trailer Button */}
             <Link
-              to="#"
-              className="text-blue-300 font-semibold hover:underline ml-1"
+                to={`/${data.media_type}/details/${data.id}/trailer`}
+                className="relative mt-5 bg-purple-600 hover:bg-purple-500 p-4 rounded-lg text-white text-sm md:text-base font-semibold transition duration-300 transform hover:scale-105"
             >
-              more
+                Watch Trailer
             </Link>
-          </p>
-          <div className="info-section flex flex-wrap gap-4 items-center mt-6 text-sm lg:text-base">
-            <span className="flex items-center gap-2">
-              <i className="ri-calendar-event-line text-xl text-gray-300"></i>
-              <span>{data.release_date || "N/A"}</span>
-            </span>
-
-            <span className="flex items-center gap-2">
-              <i className="ri-movie-2-fill text-xl text-gray-300"></i>
-              <span>{data.media_type || "Unknown"}</span>
-            </span>
-
-            <span className="flex items-center gap-2">
-              <i className="ri-chat-poll-fill text-xl text-gray-300"></i>
-              <span>{data.vote_count || "0"}</span>
-            </span>
-          </div>
-          <Link
-            to="#"
-            className="bg-purple-600 hover:bg-purple-700 transition-all px-6 py-3 rounded-lg text-lg font-semibold mt-6 inline-block"
-          >
-            Watch Trailer
-          </Link>
         </div>
-      </div>
-    </header>
-  );
+    );
 };
 
 export default Header;

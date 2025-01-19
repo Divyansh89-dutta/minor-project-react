@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Sidenav from "./partials/Sidenav";
 import Topnav from "./partials/Topnav";
 import axios from "../utils/axios";
@@ -6,59 +6,62 @@ import Header from "./partials/Header";
 import HorizontalCards from "./partials/HorizontalCards";
 import Dropdown from "./partials/Dropdown";
 import Loading from "./Loading";
-function Home() {
-  document.title = "Movie | Homepage";
 
-  const [wallpaper, setWallpaper] = useState(null);
-  const [trending, setTrending] = useState([]);
-  const [category, setCategory] = useState("all");
+const Home = () => {
+    document.title = "SCSDB | Homepage";
+    const [wallpaper, setwallpaper] = useState(null);
+    const [trending, settrending] = useState(null);
+    const [category, setcategory] = useState("all");
 
-  const GetHeaderWallpaper = async () => {
-    try {
-      const { data } = await axios.get(`/trending/all/day`);
-      const randomIndex = Math.floor(Math.random() * data.results.length);
-      const randomData = data.results[randomIndex];
-      setWallpaper(randomData);
-    } catch (error) {
-      console.error("Error fetching header wallpaper:", error);
-    }
-  };
+    const GetHeaderWallpaper = async () => {
+        try {
+            const { data } = await axios.get(`/trending/all/day`);
+            let randomdata =
+                data.results[(Math.random() * data.results.length).toFixed()];
+            setwallpaper(randomdata);
+        } catch (error) {
+            console.log("Error: ", error);
+        }
+    };
 
-  const GetTrending = async () => {
-    try {
-      const { data } = await axios.get(`/trending/${category}/day`);
-      setTrending(data.results);
-    } catch (error) {
-      console.error("Error fetching trending:", error);
-    }
-  };
+    const GetTrending = async () => {
+        try {
+            const { data } = await axios.get(`/trending/${category}/day`);
+            settrending(data.results);
+        } catch (error) {
+            console.log("Error: ", error);
+        }
+    };
 
-  useEffect(() => {
-    if (!wallpaper) {
-      GetHeaderWallpaper();
-    }
-    GetTrending();
-  }, [category]); // Ensure the wallpaper updates if category changes
+    useEffect(() => {
+        GetTrending();
+        !wallpaper && GetHeaderWallpaper();
+    }, [category]);
 
-  return wallpaper && trending.length > 0 ? (
-    <>
-      <Sidenav />
-      <div className="lg:w-[80%] h-full overflow-auto overflow-x-hidden">
-        <Topnav />
-        <Header data={wallpaper} />
-        <div className="flex justify-between p-5 -mt-7 lg:mt-0">
-          <Dropdown
-            title="Filter"
-            options={["tv", "movie", "all"]}
-            func={(e) => setCategory(e.target.value)} // Correct the state setter to setCategory
-          />
-        </div>
-        <HorizontalCards data={trending} fun={setCategory} />
-      </div>
-    </>
-  ) : (
-    <Loading />
-  );
-}
+    return wallpaper && trending ? (
+        <>
+            <Sidenav />
+            <div className="lg:w-[80%] p-2 lg:p-0 h-full overflow-auto overflow-x-hidden">
+                <Topnav />
+                <Header data={wallpaper} />
+                <div className="flex flex-col lg:flex-row justify-between p-5">
+                    <h1 className="text-3xl font-semibold text-zinc-400 mb-4 lg:mb-0">
+                        Trending
+                    </h1>
+
+                    <Dropdown
+                        title="Filter"
+                        options={["tv", "movie", "all"]}
+                        func={(e) => setcategory(e.target.value)}
+                        className="mb-4 lg:mb-0"
+                    />
+                </div>
+                <HorizontalCards data={trending} />
+            </div>
+        </>
+    ) : (
+        <Loading />
+    );
+};
 
 export default Home;

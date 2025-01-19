@@ -6,7 +6,18 @@
 /* secondary - #6556CD */
 
 ::-webkit-scrollbar {
-    display: none;
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #49494c;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6556cd;
+    border-radius: 10px;
 }
 
 select {
@@ -34,16 +45,15 @@ select::-ms-expand {
     display: flex;
     width: 20em;
     height: 3em;
-    padding: 0px 10px;
     line-height: 3;
-    border-radius: 50px;
     background: #27272a;
     overflow: hidden;
+    border-radius: 0.25em;
 }
 .select::after {
     content: "\25BC";
     position: absolute;
-    top: 0.5;
+    top: 0;
     right: 0;
     padding: 0 1em;
     background: #27272a;
@@ -54,46 +64,3 @@ select::-ms-expand {
 .select:hover::after {
     color: #6556cd;
 }
-
-body {
-    background-color: #121212; /* Set your desired background color */
-}
-
-.w-screen {
-    background-color: #121212; /* Ensure the background is consistent */
-}
-
-.text-shadow-lg {
-    text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.7);
-  }
-  
-  .text-shadow-md {
-    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.6);
-  }
-  /* Custom Scrollbar */
-.scrollbar-thin {
-    scrollbar-width: thin;
-  }
-  
-  .scrollbar-thumb-gray-300 {
-    scrollbar-color: #d1d5db transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar {
-    height: 8px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 4px;
-  }
-  
-  /* Line Clamping */
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
