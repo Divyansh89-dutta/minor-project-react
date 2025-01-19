@@ -94,7 +94,7 @@ const Movie = () => {
                     }
                     className="px-5"
                 >
-                    <Verticalcard data={movies} title={category.charAt(0).toUpperCase() + category.slice(1)} />
+                    <Verticalcard data={movies} title={'movie'.charAt(0).toUpperCase() + 'movie'.slice(1)} />
                 </InfiniteScroll>
             )}
         </div>

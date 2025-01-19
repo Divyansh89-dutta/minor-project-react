@@ -1,13 +1,27 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function HorizontalCards({ data, fun, title = "Browse Items", fallbackImage }) {
+function HorizontalCards({ data, title = "Browse Items", fallbackImage }) {
+  const navigate = useNavigate();
+
+  const handleViewDetails = (item) => {
+    if (item.media_type === 'movie') {
+      navigate(`/movie-details/${item.id}`);
+    } else if (item.media_type === 'tv') {
+      navigate(`/tv-details/${item.id}`);
+    } else if (item.media_type === 'person') {
+      navigate(`/person-details/${item.id}`);
+    }
+  };
+
   return (
     <div className="p-4 -mt-6">
+      {/* Card Section Container */}
       <div className="w-full h-auto bg-zinc-500 rounded-lg shadow-lg p-4">
         {/* Section Title */}
-        <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
 
-        {/* Card Container */}
+        {/* Horizontal Card Scroller */}
         <div className="w-full flex overflow-x-auto space-x-6 p-4 bg-zinc-400 rounded-lg shadow-inner scrollbar-thin scrollbar-thumb-gray-300">
           {data.map((item, index) => {
             const imageUrl = item.backdrop_path
@@ -17,13 +31,13 @@ function HorizontalCards({ data, fun, title = "Browse Items", fallbackImage }) {
             return (
               <div
                 key={index}
-                className="flex-shrink-0 flex flex-col bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 gap-4 w-[280px] max-h-[400px]"
+                className="flex-shrink-0 flex flex-col bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 gap-4 w-[280px] max-h-[400px]"
               >
                 {/* Image */}
                 <img
                   className="w-full h-[150px] rounded-lg object-cover"
                   src={imageUrl}
-                  alt={item.name || item.original_name || item.original_title || "Image"}
+                  alt={item.title || item.original_name || item.original_title || "Image"}
                 />
 
                 {/* Text Content */}
@@ -38,8 +52,8 @@ function HorizontalCards({ data, fun, title = "Browse Items", fallbackImage }) {
 
                 {/* Action Button */}
                 <button
-                  onClick={() => fun(item)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition-all duration-300"
+                  onClick={() => handleViewDetails(item)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition-transform duration-300 hover:scale-105"
                 >
                   View Details
                 </button>

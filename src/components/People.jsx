@@ -75,7 +75,7 @@ const People = () => {
           loader={<h1 className="text-center text-white">Loading...</h1>}
           className="px-[5%]"
         >
-          <Verticalcard data={people} title="Popular People" />
+          <Verticalcard data={people} title="person" />
         </InfiniteScroll>
       )}
     </div>

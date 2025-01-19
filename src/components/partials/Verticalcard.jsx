@@ -18,7 +18,8 @@ function Verticalcard({ data, title }) {
             key={index}
             className="bg-white rounded-lg shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:bg-gray-100"
           >
-            <Link to={`/movie/${item.id}`} className="block">
+            <Link to={`/${item.media_type || "movie"}-details/${item.id}`} className="block">
+
               {/* Image */}
               <div className="relative overflow-hidden rounded-t-lg">
                 <img
